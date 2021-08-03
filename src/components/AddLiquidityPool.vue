@@ -1,8 +1,7 @@
 <template>
 <div>
 	<div class="sp-component sp-box sp-shadow">
-		{{ JSON.stringify(balances)}}
-		<h1>Create new pool</h1>
+		validation: {{ JSON.stringify(requirements)}}
 		<form>
 			<select v-model="deposit[0].denom">
 				<option v-for="{ denom } in balances" v-bind:key="'denom1_' + denom" :value="denom">{{ denom }}</option>
@@ -36,47 +35,55 @@ export default defineComponent({
 				{ amount: '', denom: '' },
 			],
 			memo: '',
+			validation: {
+				// init_pool_coin_mint_amount: '',
+				min_init_deposit_amount: '',
+				pool_creation_fee: [],
+			},
+			balances: []
 		}
 	},
 	async mounted(){
-		// await this.QueryAllBalances({
-		// 	params: { address: this.address },
-		// 	options: { all: true, subscribe: true },
-		// })
-		// console.log(this.getAllBalances)
+		const {
+			params: {
+				min_init_deposit_amount,
+				// init_pool_coin_mint_amount,
+				pool_creation_fee
+			}
+		} = await this.QueryParams({})
+
+		// this.requirements.init_pool_coin_mint_amount = init_pool_coin_mint_amount
+		this.validation.min_init_deposit_amount = min_init_deposit_amount
+		this.validation.pool_creation_fee = pool_creation_fee
+
+		const { balances } = await this.QueryAllBalances({
+			params: { address: this.address },
+			options: { all: true, subscribe: false },
+		})
+		this.balances = balances
+
 	},
 	methods: {
-		...mapActions('tendermint.liquidity.v1beta1', ['sendMsgCreatePool']),
+		...mapActions('tendermint.liquidity.v1beta1', ['QueryParams', 'sendMsgCreatePool']),
 		...mapActions('cosmos.bank.v1beta1', ['QueryAllBalances']),
 		async createPool() {
-			await this.sendMsgCreatePool({
-				value: {
-					poolCreatorAddress: this.address,
-					poolTypeId: 1,
-					depositCoins: this.deposit,
-				},
-				// example at https://github.com/tendermint/liquidity/blob/develop/doc/client.md#msgcreatepool
-				// there is: "fee": { "amount": [],
-				// ---------
-				// fee: [
-				// 	{ amount: '20000', denom: 'uusd' },
-				// 	{ denom: 'token', amount: '20000' },
-				// ],
-				memo: 'tokens to stake',
-			})
+			if(this.validation.min_init_deposit_amount > this.deposit[0].amount || this.validation.min_init_deposit_amount > this.deposit[1].amount){
+				alert(`Amount should be more than ${this.validation.min_init_deposit_amount}`)
+			} else {
+				await this.sendMsgCreatePool({
+					value: {
+						poolCreatorAddress: this.address,
+						poolTypeId: 1,
+						depositCoins: this.deposit,
+					},
+					memo: this.memo
+				})
+			}
 		},
 	},
-
 	computed: {
 		...mapGetters('common/wallet', ['address']),
 		...mapGetters('cosmos.bank.v1beta1', ['getAllBalances']),
-		balances: function () {
-			return (
-				this.getAllBalances({
-					params: { address: this.address },
-				}).balances
-			)
-		},
 	}
 })
 </script>
