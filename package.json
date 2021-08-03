@@ -8,7 +8,8 @@
     "serve": "vue-cli-service serve --mode=production",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "dev": "vue-cli-service serve",
+    "dev": "vue-cli-service serve --mode dev",
+    "testnet": "vue-cli-service serve --mode testnet",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
