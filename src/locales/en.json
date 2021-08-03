@@ -1,0 +1,6 @@
+{
+  "greeting": {
+    "anonymous": "Hello. Please login with yours wallet.",
+    "user": "Nice to meet you, {name}."
+  }
+}
