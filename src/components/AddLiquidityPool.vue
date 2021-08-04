@@ -1,7 +1,7 @@
 <template>
 <div>
 	<div class="sp-component sp-box sp-shadow">
-		validation: {{ JSON.stringify(requirements)}}
+		validation: {{ JSON.stringify(validation)}}
 		<form>
 			<select v-model="deposit[0].denom">
 				<option v-for="{ denom } in balances" v-bind:key="'denom1_' + denom" :value="denom">{{ denom }}</option>
@@ -67,9 +67,13 @@ export default defineComponent({
 		...mapActions('tendermint.liquidity.v1beta1', ['QueryParams', 'sendMsgCreatePool']),
 		...mapActions('cosmos.bank.v1beta1', ['QueryAllBalances']),
 		async createPool() {
-			if(this.validation.min_init_deposit_amount > this.deposit[0].amount || this.validation.min_init_deposit_amount > this.deposit[1].amount){
+			if(Number(this.validation.min_init_deposit_amount) > this.deposit[0].amount ||
+				Number(this.validation.min_init_deposit_amount) > this.deposit[1].amount) {
 				alert(`Amount should be more than ${this.validation.min_init_deposit_amount}`)
-			} else {
+				return
+			}
+			// this.pool_creation_fee.find(({ denom }) => denom === (this.deposit[0].denom || this.deposit[1].denom))
+
 				await this.sendMsgCreatePool({
 					value: {
 						poolCreatorAddress: this.address,
@@ -78,7 +82,6 @@ export default defineComponent({
 					},
 					memo: this.memo
 				})
-			}
 		},
 	},
 	computed: {
