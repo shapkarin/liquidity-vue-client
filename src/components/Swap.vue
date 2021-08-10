@@ -42,17 +42,17 @@ export default defineComponent({
 			pair: {
 				from: {
 					denom: '',
-					amount: 0
+					amount: 0,
 				},
 				to: {
 					denom: '',
-					amount: 0
-				}
+					amount: 0,
+				},
 			},
 			denoms: [],
 			fee: 0,
 			payCoinPoolAmount: '',
-			receiveCoinPoolAmount: ''
+			receiveCoinPoolAmount: '',
 		}
 	},
 	async mounted() {
@@ -66,15 +66,18 @@ export default defineComponent({
 		// 	this.getReceiveCoinAmount(this.pair.from, )
 		// },
 		async swap() {
-			const { pool_id, reserve_account_address } = this.getPairInfo(this.pair.from.denom, this.pair.to.denom)
+			const pool_id = await this.getPairPoolId(this.pair.from.denom, this.pair.to.denom)
+			await this.QueryLiquidityPool({ params: { pool_id } })
+			const { pool: { reserve_account_address } } = this.getLiquidityPool({ params: { pool_id } })
+
 			await this.QueryParams({ params: { pool_id } })
 			const {
-				params: { swap_fee_rate, max_order_amount_ratio }
+				params: { swap_fee_rate, max_order_amount_ratio },
 			} = this.getParams({ params: { pool_id } })
 
 			const { balances: PoolBalances } = await this.QueryAllBalances({
 				params: { address: reserve_account_address },
-				options: { all: true, subscribe: false }
+				options: { all: true, subscribe: false },
 			})
 
 			const { amount: payCoinPoolAmount } = PoolBalances.find(({ denom }) => denom === this.pair.from.denom)
@@ -100,7 +103,7 @@ export default defineComponent({
 					/** half of offer coin amount * params.swap_fee_rate for reservation to pay fees */
 					offerCoinFee: {
 						denom: this.pair.from.denom,
-						amount: Math.trunc((this.pair.from.amount / 2) * swap_fee_rate)
+						amount: Math.trunc((this.pair.from.amount / 2) * swap_fee_rate),
 					},
 					/**
 					 * limit order price for the order, the price is the exchange ratio of X/Y where X is the amount of the first coin and
@@ -108,12 +111,12 @@ export default defineComponent({
 					 */
 					// orderPrice: '2',
 					// orderPrice: this.pair.to.amount, // 05 или 2
-					orderPrice
-				}
+					orderPrice,
+				},
 				// fee: [{ denom: this.pair.from.denom, amount: '20000' }, { amount: '20000', denom: 'stake' }],
 			})
 		},
-		...mapActions('tendermint.liquidity.v1beta1', ['QueryLiquidityPools', 'QueryParams', 'sendMsgSwapWithinBatch']),
+		...mapActions('tendermint.liquidity.v1beta1', ['QueryLiquidityPools', 'QueryLiquidityPool', 'QueryParams', 'sendMsgSwapWithinBatch']),
 		...mapActions('cosmos.bank.v1beta1', ['QueryAllBalances']),
 		...mapActions('swap', ['loadDenoms']),
 		onSelectDenom({ target: { name, value } }) {
@@ -140,13 +143,13 @@ export default defineComponent({
 
 			const swapPrice = ((BigInt(payCoinPoolAmount) + BigInt(2 * payCoinAmount)) * BigInt(precisionDigits)) / BigInt(receiveCoinPoolAmount)
 			return swapPrice
-		}
+		},
 	},
 	computed: {
-		...mapGetters('tendermint.liquidity.v1beta1', ['getParams', 'getLiquidityPools']),
+		...mapGetters('tendermint.liquidity.v1beta1', ['getParams', 'getLiquidityPools', 'getLiquidityPool']),
 		...mapGetters('common/wallet', ['client', 'address']),
 		...mapGetters('tendermint.liquidity.v1beta1', ['getLiquidityPools']),
-		...mapGetters('swap', ['getAllDenomsNames', 'getAllPossiblePairs', 'getDenomPairs', 'getAllDenoms', 'getPairInfo']),
+		...mapGetters('swap', ['getAllDenomsNames', 'getAllPossiblePairs', 'getDenomPairs', 'getAllDenoms', 'getPairPoolId']),
 		...mapGetters('cosmos.bank.v1beta1', ['getAllBalances']),
 		// todo App.vue in parent
 		connected() {
@@ -162,10 +165,10 @@ export default defineComponent({
 		},
 		balances: function () {
 			return this.getAllBalances({
-				params: { address: this.address }
+				params: { address: this.address },
 			}).balances
-		}
-	}
+		},
+	},
 })
 </script>
 
