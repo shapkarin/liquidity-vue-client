@@ -48,9 +48,9 @@ export default defineComponent({
 		}
 	},
 	async setup() {
-		const { balances, myAddress } = await useBalances()
+		const { balances, address } = await useBalances()
 
-		return { balances, myAddress }
+		return { balances, address }
 	},
 	async mounted() {
 		const {
@@ -79,7 +79,7 @@ export default defineComponent({
 
 			await this.sendMsgCreatePool({
 				value: {
-					poolCreatorAddress: this.myAddress,
+					poolCreatorAddress: this.address,
 					poolTypeId: 1,
 					depositCoins: this.deposit,
 				},

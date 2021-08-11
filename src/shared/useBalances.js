@@ -1,36 +1,33 @@
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 
-// при открытии напрямую страницы /liquidity, balances = undefined
-export default async function (otherAddress = '') {
+export default async function () {
 	const store = useStore()
 
-	const BANK_MODULE = 'cosmos.bank.v1beta1'
-	const WALLET_MODULE = 'common/wallet'
+	const address = computed(() => store.getters['common/wallet/address'])
+	const balances = ref()
 
-	const myAddress = computed(() => store.getters[`${WALLET_MODULE}/address`])
-	const address = otherAddress || myAddress.value
+	/*
+		if user diretly open /liquidity directly and not authed
+		after the auth, "address" updates reactive only insode other component setup()
 
-	// возвращает значение
-	setTimeout(() => {
-		console.log({ myAddress1: myAddress.value })
-	}, 420)
-
-	// дефолтное значение стора, пустая строка
-	console.log({ myAddress2: myAddress.value })
-
-	const QueryAllBalances = await store.dispatch(`${BANK_MODULE}/QueryAllBalances`, {
-		params: { address },
-	})
-
-	const balances = computed(
-		() =>
-			store.getters[`${BANK_MODULE}/getAllBalances`]({
-				params: { address },
-			})?.balances ?? [],
+		I guess it's OK to use "watch" until account can be changed and balances should be updated
+		and QueryAllBalances action returns getter
+	*/
+	watch(
+		address,
+		async (newVale) => {
+			if (newVale) {
+				balances.value =
+					(
+						await store.dispatch('cosmos.bank.v1beta1/QueryAllBalances', {
+							params: { address: newVale },
+						})
+					)?.balances ?? []
+			}
+		},
+		{ immediate: true },
 	)
 
-	console.log({ balances })
-
-	return { balances: [], myAddress, QueryAllBalances: () => {} }
+	return { balances, address }
 }
