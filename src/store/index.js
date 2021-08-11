@@ -9,8 +9,8 @@ const store = createStore({
 	mutations: {},
 	actions: {},
 	modules: {
-		swap
-	}
+		swap,
+	},
 })
 init(store)
 export default store

@@ -1,33 +1,40 @@
 <template>
-	<div class="sp-component sp-box sp-shadow">
-		<div>
-			payCoinPoolAmount: {{ payCoinPoolAmount }}<br />
-			receiveCoinPoolAmount: {{ receiveCoinPoolAmount }}<br />
-		</div>
-		<form>
-			<select v-model="pair.from.denom" @change="onSelectDenom" name="from">
-				<option v-for="(denom, index) in getAllDenomsNames" v-bind:key="'denom1_' + index">{{ denom }}</option>
-			</select>
-			<input v-on:keyup="onDenomAmount" v-model="pair.from.amount" type="number" step="0.0001" max="10000" min="0" />
+	<div>
+		<div class="sp-component sp-box sp-shadow">
+			<div>
+				payCoinPoolAmount: {{ payCoinPoolAmount }}<br />
+				receiveCoinPoolAmount: {{ receiveCoinPoolAmount }}<br />
+			</div>
+			<form>
+				<select v-model="pair.from.denom" @change="onSelectDenom" name="from">
+					<option v-for="(denom, index) in getAllDenomsNames" v-bind:key="'denom1_' + index">{{ denom }}</option>
+				</select>
+				<input v-on:keyup="onDenomAmount" v-model="pair.from.amount" type="number" step="0.0001" max="10000" min="0" />
 
-			<br />
-			<select :disabled="!pair.from.denom" v-model="pair.to.denom" @change="onSelectDenom" name="to" selected="1">
-				<option v-for="(denom, index) in denoms" v-bind:key="'denom2_' + index">{{ denom }}</option>
-			</select>
-			<input v-on:keyup="onDenomAmount" v-model="pair.to.amount" ype="number" step="0.0001" max="10000" min="0" />
-			<br />
-			<br />
-			<SpButton type="secondary" :disabled="!client && connected" @click="swap()">Swap</SpButton>
-		</form>
-
-		<h3>All exchange directions in all pools:</h3>
-		<br />
-		<div v-for="pair in allPairsNames" v-bind:key="pair" class="pair_stat">
-			<b>{{ pair.denom }}</b> swap_to: <b>{{ pair.changeTo }}</b>
+				<br />
+				<select :disabled="!pair.from.denom" v-model="pair.to.denom" @change="onSelectDenom" name="to" selected="1">
+					<option v-for="(denom, index) in denoms" v-bind:key="'denom2_' + index">{{ denom }}</option>
+				</select>
+				<input v-on:keyup="onDenomAmount" v-model="pair.to.amount" ype="number" step="0.0001" max="10000" min="0" />
+				<br />
+				<br />
+				<SpButton type="secondary" :disabled="!loggedIn" @click="swap()">Swap</SpButton>
+			</form>
 		</div>
-		<br />
-		<br />
-		<SpTransferList :address="address" :refresh="true" v-if="client" />
+
+		<div class="sp-component">
+			<div class="sp-component-title">
+				<h3>Exchange directions</h3>
+				<span>|</span><span>From all liquidity <router-link to="/liquidity">pools</router-link></span>
+			</div>
+			<div class="sp-box sp-shadow">
+				<div v-for="pair in allPairsNames" v-bind:key="pair" class="pair_stat">
+					<b>{{ pair.denom }}</b> swap_to: <b>{{ pair.changeTo }}</b>
+				</div>
+			</div>
+		</div>
+
+		<SpTransferList :address="address" :refresh="true" v-if="loggedIn" />
 	</div>
 </template>
 
@@ -68,13 +75,16 @@ export default defineComponent({
 		async swap() {
 			const pool_id = await this.getPairPoolId(this.pair.from.denom, this.pair.to.denom)
 			await this.QueryLiquidityPool({ params: { pool_id } })
-			const { pool: { reserve_account_address } } = this.getLiquidityPool({ params: { pool_id } })
+			const {
+				pool: { reserve_account_address },
+			} = this.getLiquidityPool({ params: { pool_id } })
 
 			await this.QueryParams({ params: { pool_id } })
 			const {
 				params: { swap_fee_rate, max_order_amount_ratio },
 			} = this.getParams({ params: { pool_id } })
 
+			// todo: remove
 			const { balances: PoolBalances } = await this.QueryAllBalances({
 				params: { address: reserve_account_address },
 				options: { all: true, subscribe: false },
@@ -147,7 +157,7 @@ export default defineComponent({
 	},
 	computed: {
 		...mapGetters('tendermint.liquidity.v1beta1', ['getParams', 'getLiquidityPools', 'getLiquidityPool']),
-		...mapGetters('common/wallet', ['client', 'address']),
+		...mapGetters('common/wallet', ['loggedIn', 'address']),
 		...mapGetters('tendermint.liquidity.v1beta1', ['getLiquidityPools']),
 		...mapGetters('swap', ['getAllDenomsNames', 'getAllPossiblePairs', 'getDenomPairs', 'getAllDenoms', 'getPairPoolId']),
 		...mapGetters('cosmos.bank.v1beta1', ['getAllBalances']),

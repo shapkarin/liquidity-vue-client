@@ -9,5 +9,5 @@ export default function init(store) {
 	blocks(store)
 	env(store)
 	wallet(store)
-	// relayers(store)
+	relayers(store)
 }

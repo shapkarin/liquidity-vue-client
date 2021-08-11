@@ -2,15 +2,12 @@
 	<div>
 		<div class="basic-info sp-component sp-box sp-shadow">
 			<h4>
-				<!-- <template v-if="!client">{{ $t('greeting.anonymous') }}</template>
-				<template v-else>{{ $t('greeting.user', { name: address }) }}</template> -->
-				<template v-if="!client">Please auth with your's wallet. To unlick some UI parts.</template>
-				<template v-else>Nice to meet you.</template>
+				<template v-if="!loggedIn">Please auth with your's wallet.</template>
+				<template v-else>Nice to meet you!</template>
 			</h4>
 			<Status />
 		</div>
-		<SpTransferList :address="address" :refresh="true" v-if="client" />
-		<SpTokenSend :address="address" refresh="true" v-if="client" />
+		<SpTransferList :address="address" :refresh="true" v-if="loggedIn" />
 	</div>
 </template>
 
@@ -26,7 +23,7 @@ export default defineComponent({
 		Status,
 	},
 	computed: {
-		...mapGetters('common/wallet', ['address', 'client']),
+		...mapGetters('common/wallet', ['address', 'loggedIn']),
 	},
 })
 </script>

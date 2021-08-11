@@ -10,10 +10,16 @@ The vue.js framework for building your user interface helps with rapid app devel
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Run development environment with .env.dev variables
 
 ```
-npm run serve
+npm run dev
+```
+
+### Run development with variables defined at .env.testnet
+
+```
+npm run testnet
 ```
 
 ### Compiles and minifies for production
