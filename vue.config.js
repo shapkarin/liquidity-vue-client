@@ -12,9 +12,9 @@ module.exports = {
 				vue$: path.resolve('./node_modules/vue/dist/vue.esm-bundler.js'),
 				'@': path.resolve(__dirname, 'src/*'),
 			},
-			extensions: ['.js', '.vue'],
+			extensions: ['.js', '.ts', '.vue'],
 		},
-		entry: ['./node_modules/regenerator-runtime/runtime.js', './src/main.js'],
+		entry: ['./node_modules/regenerator-runtime/runtime.js', './src/main.ts'],
 	},
 
 	// pluginOptions: {

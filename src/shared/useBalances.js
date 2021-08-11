@@ -1,7 +1,8 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 
-export default async function (otherAddress) {
+// при открытии напрямую страницы /liquidity, balances = undefined
+export default async function (otherAddress = '') {
 	const store = useStore()
 
 	const BANK_MODULE = 'cosmos.bank.v1beta1'
@@ -10,12 +11,26 @@ export default async function (otherAddress) {
 	const myAddress = computed(() => store.getters[`${WALLET_MODULE}/address`])
 	const address = otherAddress || myAddress.value
 
-	const balances = computed(() => store.getters[`${BANK_MODULE}/getAllBalances`]({ params: { address } }).balances)
+	// возвращает значение
+	setTimeout(() => {
+		console.log({ myAddress1: myAddress.value })
+	}, 420)
+
+	// дефолтное значение стора, пустая строка
+	console.log({ myAddress2: myAddress.value })
 
 	const QueryAllBalances = await store.dispatch(`${BANK_MODULE}/QueryAllBalances`, {
 		params: { address },
-		options: { all: true, subscribe: false },
 	})
 
-	return { balances, QueryAllBalances, myAddress }
+	const balances = computed(
+		() =>
+			store.getters[`${BANK_MODULE}/getAllBalances`]({
+				params: { address },
+			})?.balances ?? [],
+	)
+
+	console.log({ balances })
+
+	return { balances: [], myAddress, QueryAllBalances: () => {} }
 }

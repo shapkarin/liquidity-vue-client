@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 import useBalances from '../shared/useBalances'
 
@@ -48,9 +48,9 @@ export default defineComponent({
 		}
 	},
 	async setup() {
-		const { balances, myAddress: address } = await useBalances()
+		const { balances, myAddress } = await useBalances()
 
-		return { balances, address }
+		return { balances, myAddress }
 	},
 	async mounted() {
 		const {
@@ -79,7 +79,7 @@ export default defineComponent({
 
 			await this.sendMsgCreatePool({
 				value: {
-					poolCreatorAddress: this.address,
+					poolCreatorAddress: this.myAddress,
 					poolTypeId: 1,
 					depositCoins: this.deposit,
 				},

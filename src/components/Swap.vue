@@ -18,7 +18,7 @@
 				<input v-on:keyup="onDenomAmount" v-model="pair.to.amount" ype="number" step="0.0001" max="10000" min="0" />
 				<br />
 				<br />
-				<SpButton type="secondary" :disabled="!client && connected" @click="swap()">Swap</SpButton>
+				<SpButton type="secondary" :disabled="!loggedIn" @click="swap()">Swap</SpButton>
 			</form>
 		</div>
 
@@ -34,7 +34,7 @@
 			</div>
 		</div>
 
-		<SpTransferList :address="address" :refresh="true" v-if="client" />
+		<SpTransferList :address="address" :refresh="true" v-if="loggedIn" />
 	</div>
 </template>
 
@@ -84,6 +84,7 @@ export default defineComponent({
 				params: { swap_fee_rate, max_order_amount_ratio },
 			} = this.getParams({ params: { pool_id } })
 
+			// todo: remove
 			const { balances: PoolBalances } = await this.QueryAllBalances({
 				params: { address: reserve_account_address },
 				options: { all: true, subscribe: false },
@@ -156,7 +157,7 @@ export default defineComponent({
 	},
 	computed: {
 		...mapGetters('tendermint.liquidity.v1beta1', ['getParams', 'getLiquidityPools', 'getLiquidityPool']),
-		...mapGetters('common/wallet', ['client', 'address']),
+		...mapGetters('common/wallet', ['loggedIn', 'address']),
 		...mapGetters('tendermint.liquidity.v1beta1', ['getLiquidityPools']),
 		...mapGetters('swap', ['getAllDenomsNames', 'getAllPossiblePairs', 'getDenomPairs', 'getAllDenoms', 'getPairPoolId']),
 		...mapGetters('cosmos.bank.v1beta1', ['getAllBalances']),

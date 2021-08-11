@@ -2,7 +2,7 @@
 	<div>
 		<Suspense>
 			<template #default>
-				<AddLiquidityPool v-if="client" />
+				<AddLiquidityPool v-if="loggedIn" />
 			</template>
 			<template #fallback>
 				<div>Loading...</div>
@@ -18,7 +18,7 @@
 					pool_coin_denom: {{ pool.pool_coin_denom }} <br />
 					reserve_account_address: {{ pool.reserve_account_address }} <br />
 					id: {{ pool.id }}, type_id: {{ pool.type_id }} <br /><br />
-					<SpButton type="secondary" :disabled="!client">Trade</SpButton> <br />
+					<SpButton type="secondary" :disabled="!loggedIn">Trade</SpButton> <br />
 				</div>
 			</div>
 		</div>
@@ -39,7 +39,7 @@ export default defineComponent({
 	computed: {
 		...mapGetters('tendermint.liquidity.v1beta1', ['getLiquidityPools', 'getLiquidityPool', 'getParams', 'getPoolBatchSwapMsg']),
 		...mapGetters('common/env', ['apiTendermint', 'apiCosmos', 'apiWS']),
-		...mapGetters('common/wallet', ['client']),
+		...mapGetters('common/wallet', ['loggedIn']),
 		pools() {
 			return this.getLiquidityPools().pools // todo: optional chaining
 		},
