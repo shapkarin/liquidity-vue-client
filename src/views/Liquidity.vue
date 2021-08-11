@@ -1,6 +1,13 @@
 <template>
 	<div>
-		<AddLiquidityPool v-if="client" />
+		<Suspense>
+			<template #default>
+				<AddLiquidityPool v-if="client" />
+			</template>
+			<template #fallback>
+				<div>Loading...</div>
+			</template>
+		</Suspense>
 		<div class="sp-component">
 			<div class="sp-component-title">
 				<h3 id="liquidity_pools">Liquidity pools</h3>

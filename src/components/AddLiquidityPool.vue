@@ -4,7 +4,6 @@
 			<h3>Create new liquidity pool</h3>
 		</div>
 		<div class="sp-box sp-shadow">
-			<!-- <SpAmountSelect :index="0" v-model="balances[0]" :available="balances" :selected="() => balances.map((b) => b.denom)" v-bind:key="'fee' + index" /> -->
 			validation: {{ JSON.stringify(validation) }}
 			<form>
 				<select v-model="deposit[0].denom">
@@ -30,6 +29,8 @@
 import { defineComponent } from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 
+import useBalances from '../shared/useBalances'
+
 export default defineComponent({
 	name: 'AddLiquidityPool',
 	data() {
@@ -44,8 +45,12 @@ export default defineComponent({
 				min_init_deposit_amount: '',
 				pool_creation_fee: [],
 			},
-			balances: [],
 		}
+	},
+	async setup() {
+		const { balances, myAddress: address } = await useBalances()
+
+		return { balances, address }
 	},
 	async mounted() {
 		const {
@@ -59,16 +64,9 @@ export default defineComponent({
 		// this.requirements.init_pool_coin_mint_amount = init_pool_coin_mint_amount
 		this.validation.min_init_deposit_amount = min_init_deposit_amount
 		this.validation.pool_creation_fee = pool_creation_fee
-
-		const { balances } = await this.QueryAllBalances({
-			params: { address: this.address },
-			options: { all: true, subscribe: false },
-		})
-		this.balances = balances
 	},
 	methods: {
 		...mapActions('tendermint.liquidity.v1beta1', ['QueryParams', 'sendMsgCreatePool']),
-		...mapActions('cosmos.bank.v1beta1', ['QueryAllBalances']),
 		async createPool() {
 			if (
 				Number(this.validation.min_init_deposit_amount) > this.deposit[0].amount ||
@@ -88,10 +86,6 @@ export default defineComponent({
 				memo: this.memo,
 			})
 		},
-	},
-	computed: {
-		...mapGetters('common/wallet', ['address']),
-		...mapGetters('cosmos.bank.v1beta1', ['getAllBalances']),
 	},
 })
 </script>
