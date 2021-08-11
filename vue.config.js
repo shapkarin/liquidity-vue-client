@@ -14,7 +14,7 @@ module.exports = {
 			},
 			extensions: ['.js', '.vue'],
 		},
-		entry: ['./node_modules/regenerator-runtime/runtime.js', './src/main.js', './src/scss/app.scss'],
+		entry: ['./node_modules/regenerator-runtime/runtime.js', './src/main.js'],
 	},
 
 	// pluginOptions: {
