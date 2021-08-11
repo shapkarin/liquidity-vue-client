@@ -3,7 +3,7 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 import vueLib from '@starport/vue'
-import i18n from './i18n'
+// import i18n from './i18n'
 
 const app = createApp(App)
 app.config.globalProperties._depsLoaded = true

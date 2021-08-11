@@ -10,7 +10,6 @@
     "lint": "vue-cli-service lint",
     "dev": "vue-cli-service serve --mode dev",
     "testnet": "vue-cli-service serve --mode testnet",
-    "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
@@ -26,7 +25,6 @@
     "file-saver": "^2.0.5",
     "regenerator-runtime": "^0.13.9",
     "vue": "^3.0.11",
-    "vue-i18n": "^9.1.0",
     "vue-router": "^4.0.3",
     "vue-uuid": "^2.0.2",
     "vuex": "^4.0.2"
@@ -36,7 +34,6 @@
     "@babel/node": "^7.13.13",
     "@babel/preset-env": "^7.14.1",
     "@babel/preset-typescript": "^7.13.0",
-    "@intlify/vue-i18n-loader": "^2.1.0",
     "@vue/cli-plugin-babel": "^4.5.12",
     "@vue/cli-plugin-eslint": "^4.5.12",
     "@vue/cli-plugin-vuex": "^4.5.12",
@@ -50,7 +47,6 @@
     "prettier": "^2.2.1",
     "protobufjs": "^6.11.2",
     "sass-loader": "^8.0.2",
-    "typescript": "^4.3.5",
-    "vue-cli-plugin-i18n": "~2.1.2"
+    "typescript": "^4.3.5"
   }
 }
