@@ -10,21 +10,22 @@ module.exports = {
 			symlinks: true,
 			alias: {
 				vue$: path.resolve('./node_modules/vue/dist/vue.esm-bundler.js'),
-				'@': path.resolve(__dirname, 'src/*')
+				'@': path.resolve(__dirname, 'src/*'),
 			},
-			extensions: ['.js', '.vue']
+			extensions: ['.js', '.vue'],
 		},
+		entry: ['./node_modules/regenerator-runtime/runtime.js', './src/main.js', './src/scss/app.scss'],
 	},
 
-	pluginOptions: {
-		i18n: {
-			locale: 'en',
-			fallbackLocale: 'ru',
-			localeDir: 'locales',
-			enableLegacy: false,
-			runtimeOnly: false,
-			compositionOnly: false,
-			fullInstall: true,
-		},
-	},
+	// pluginOptions: {
+	// 	i18n: {
+	// 		locale: 'en',
+	// 		fallbackLocale: 'ru',
+	// 		localeDir: 'locales',
+	// 		enableLegacy: false,
+	// 		runtimeOnly: false,
+	// 		compositionOnly: false,
+	// 		fullInstall: true,
+	// 	},
+	// },
 }
