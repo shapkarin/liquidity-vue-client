@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<Swap />
-		<ExchangeDirections :pairs="allPairsNames" v-if="loggedIn" />
+		<ExchangeDirections :pairs="allPairsNames" />
 		<SpTransferList :address="address" :refresh="true" v-if="loggedIn" />
 	</div>
 </template>
@@ -23,9 +23,11 @@ export default defineComponent({
 		if (!this.poolsAreLoaded) {
 			await this.QueryLiquidityPools({})
 		}
+		await this.loadDenoms()
 	},
 	methods: {
 		...mapActions('tendermint.liquidity.v1beta1', ['QueryLiquidityPools']),
+		...mapActions('swap', ['loadDenoms']),
 	},
 	computed: {
 		...mapGetters('common/wallet', ['loggedIn', 'address']),
