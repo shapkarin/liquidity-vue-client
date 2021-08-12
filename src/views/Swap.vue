@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<Swap />
-		<ExchangeDirections :pairs="allPairsNames" v-if="loggedIn" />
+		<ExchangeDirections :pairs="allPairsNames" />
 		<SpTransferList :address="address" :refresh="true" v-if="loggedIn" />
 	</div>
 </template>
