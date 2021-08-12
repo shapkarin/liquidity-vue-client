@@ -1,46 +1,32 @@
 <template>
-	<div>
-		<div class="sp-component sp-box sp-shadow">
-			<div>
-				payCoinPoolAmount: {{ payCoinPoolAmount }}<br />
-				receiveCoinPoolAmount: {{ receiveCoinPoolAmount }}<br />
-			</div>
-			<form>
-				<select v-model="pair.from.denom" @change="onSelectDenom" name="from">
-					<option v-for="(denom, index) in getAllDenomsNames" v-bind:key="'denom1_' + index">{{ denom }}</option>
-				</select>
-				<input v-on:keyup="onDenomAmount" v-model="pair.from.amount" type="number" step="0.0001" max="10000" min="0" />
-
-				<br />
-				<select :disabled="!pair.from.denom" v-model="pair.to.denom" @change="onSelectDenom" name="to" selected="1">
-					<option v-for="(denom, index) in denoms" v-bind:key="'denom2_' + index">{{ denom }}</option>
-				</select>
-				<input v-on:keyup="onDenomAmount" v-model="pair.to.amount" ype="number" step="0.0001" max="10000" min="0" />
-				<br />
-				<br />
-				<SpButton type="secondary" :disabled="!loggedIn" @click="swap()">Swap</SpButton>
-			</form>
+	<div class="sp-component sp-box sp-shadow">
+		<div>
+			payCoinPoolAmount: {{ payCoinPoolAmount }}<br />
+			receiveCoinPoolAmount: {{ receiveCoinPoolAmount }}<br />
 		</div>
+		<form>
+			<select v-model="pair.from.denom" @change="onSelectDenom" name="from">
+				<option v-for="(denom, index) in getAllDenomsNames" v-bind:key="'denom1_' + index">{{ denom }}</option>
+			</select>
+			<input v-on:keyup="onDenomAmount" v-model="pair.from.amount" type="number" step="0.0001" max="10000" min="0" />
 
-		<div class="sp-component">
-			<div class="sp-component-title">
-				<h3>Exchange directions</h3>
-				<span>|</span><span>From all liquidity <router-link to="/liquidity">pools</router-link></span>
-			</div>
-			<div class="sp-box sp-shadow">
-				<div v-for="pair in allPairsNames" v-bind:key="pair" class="pair_stat">
-					<b>{{ pair.denom }}</b> swap_to: <b>{{ pair.changeTo }}</b>
-				</div>
-			</div>
-		</div>
-
-		<SpTransferList :address="address" :refresh="true" v-if="loggedIn" />
+			<br />
+			<select :disabled="!pair.from.denom" v-model="pair.to.denom" @change="onSelectDenom" name="to" selected="1">
+				<option v-for="(denom, index) in denoms" v-bind:key="'denom2_' + index">{{ denom }}</option>
+			</select>
+			<input v-on:keyup="onDenomAmount" v-model="pair.to.amount" ype="number" step="0.0001" max="10000" min="0" />
+			<br />
+			<br />
+			<SpButton type="secondary" :disabled="!loggedIn" @click="swap()">Swap</SpButton>
+		</form>
 	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
+
+// import useBalances from '../shared/useBalances'
 
 export default defineComponent({
 	name: 'Swap',
@@ -62,12 +48,11 @@ export default defineComponent({
 			receiveCoinPoolAmount: '',
 		}
 	},
-	async mounted() {
-		if (!this.poolsAreLoaded) {
-			await this.QueryLiquidityPools({})
-		}
-		await this.loadDenoms()
-	},
+	// async setup() {
+	// 	const { balances, address, fetchBalances } = await useBalances()
+
+	// 	return { balances, address, fetchBalances }
+	// },
 	methods: {
 		// test() {
 		// 	this.getReceiveCoinAmount(this.pair.from, )
@@ -126,7 +111,7 @@ export default defineComponent({
 				// fee: [{ denom: this.pair.from.denom, amount: '20000' }, { amount: '20000', denom: 'stake' }],
 			})
 		},
-		...mapActions('tendermint.liquidity.v1beta1', ['QueryLiquidityPools', 'QueryLiquidityPool', 'QueryParams', 'sendMsgSwapWithinBatch']),
+		...mapActions('tendermint.liquidity.v1beta1', ['QueryLiquidityPool', 'QueryParams', 'sendMsgSwapWithinBatch']),
 		...mapActions('cosmos.bank.v1beta1', ['QueryAllBalances']),
 		...mapActions('swap', ['loadDenoms']),
 		onSelectDenom({ target: { name, value } }) {
@@ -159,19 +144,11 @@ export default defineComponent({
 		...mapGetters('tendermint.liquidity.v1beta1', ['getParams', 'getLiquidityPools', 'getLiquidityPool']),
 		...mapGetters('common/wallet', ['loggedIn', 'address']),
 		...mapGetters('tendermint.liquidity.v1beta1', ['getLiquidityPools']),
-		...mapGetters('swap', ['getAllDenomsNames', 'getAllPossiblePairs', 'getDenomPairs', 'getAllDenoms', 'getPairPoolId']),
+		...mapGetters('swap', ['getAllDenomsNames', 'getDenomPairs', 'getAllDenoms', 'getPairPoolId']),
 		...mapGetters('cosmos.bank.v1beta1', ['getAllBalances']),
 		// todo App.vue in parent
 		connected() {
 			return true
-		},
-		poolsAreLoaded() {
-			// todo: optional chaining
-			return this.getLiquidityPools().pools ? this.getLiquidityPools().pools.length > 0 : false
-		},
-		// just to test
-		allPairsNames() {
-			return this.getAllPossiblePairs.map(({ denom, changeTo }) => ({ denom, changeTo }))
 		},
 		balances: function () {
 			return this.getAllBalances({
