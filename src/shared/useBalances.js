@@ -6,6 +6,7 @@ export default async function () {
 
 	const address = computed(() => store.getters['common/wallet/address'])
 	const balances = ref()
+	const fetchBalances = (address) => store.dispatch('cosmos.bank.v1beta1/QueryAllBalances', { params: { address } })
 
 	/*
 		if user diretly open /liquidity directly and not authed
@@ -18,16 +19,11 @@ export default async function () {
 		address,
 		async (newVale) => {
 			if (newVale) {
-				balances.value =
-					(
-						await store.dispatch('cosmos.bank.v1beta1/QueryAllBalances', {
-							params: { address: newVale },
-						})
-					)?.balances ?? []
+				balances.value = (await fetchBalances(newVale))?.balances ?? []
 			}
 		},
 		{ immediate: true },
 	)
 
-	return { balances, address }
+	return { balances, address, fetchBalances }
 }
