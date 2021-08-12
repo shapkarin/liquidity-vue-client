@@ -27,6 +27,7 @@ import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 
 // import useBalances from '../shared/useBalances'
+// import useSwap from '../shared/useSwap'
 
 export default defineComponent({
 	name: 'Swap',
@@ -48,16 +49,24 @@ export default defineComponent({
 			receiveCoinPoolAmount: '',
 		}
 	},
-	// async setup() {
-	// 	const { balances, address, fetchBalances } = await useBalances()
+	// setup() {
+	// 	const { calculateSlippage, getSwapPrice, getPayCoinAmount, getReceiveCoinAmount, getPrecision, getPrecisedAmount } = useSwap()
 
-	// 	return { balances, address, fetchBalances }
+	// 	return {
+	// 		calculateSlippage,
+	// 		// getSwapPrice,
+	// 		getPayCoinAmount,
+	// 		getReceiveCoinAmount,
+	// 		getPrecision,
+	// 		getPrecisedAmount,
+	// 	}
 	// },
 	methods: {
 		// test() {
 		// 	this.getReceiveCoinAmount(this.pair.from, )
 		// },
 		async swap() {
+			//console.log('getReceiveCoinAmount', this.getReceiveCoinAmount)
 			const pool_id = await this.getPairPoolId(this.pair.from.denom, this.pair.to.denom)
 			await this.QueryLiquidityPool({ params: { pool_id } })
 			const {
