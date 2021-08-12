@@ -27,7 +27,7 @@ import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 
 // import useBalances from '../shared/useBalances'
-// import useSwap from '../shared/useSwap'
+import useSwap from '../shared/useSwap'
 
 export default defineComponent({
 	name: 'Swap',
@@ -47,26 +47,27 @@ export default defineComponent({
 			fee: 0,
 			payCoinPoolAmount: '',
 			receiveCoinPoolAmount: '',
+			receiveCoinAmount: '',
 		}
 	},
-	// setup() {
-	// 	const { calculateSlippage, getSwapPrice, getPayCoinAmount, getReceiveCoinAmount, getPrecision, getPrecisedAmount } = useSwap()
+	setup() {
+		const { calculateSlippage, getSwapPrice, getPayCoinAmount, getReceiveCoinAmount, getPrecision, getPrecisedAmount } = useSwap()
 
-	// 	return {
-	// 		calculateSlippage,
-	// 		// getSwapPrice,
-	// 		getPayCoinAmount,
-	// 		getReceiveCoinAmount,
-	// 		getPrecision,
-	// 		getPrecisedAmount,
-	// 	}
-	// },
+		return {
+			calculateSlippage,
+			// getSwapPrice,
+			getPayCoinAmount,
+			getReceiveCoinAmount,
+			getPrecision,
+			getPrecisedAmount,
+		}
+	},
 	methods: {
 		// test() {
 		// 	this.getReceiveCoinAmount(this.pair.from, )
 		// },
 		async swap() {
-			//console.log('getReceiveCoinAmount', this.getReceiveCoinAmount)
+			// console.log('getReceiveCoinAmount', this.getReceiveCoinAmount)
 			const pool_id = await this.getPairPoolId(this.pair.from.denom, this.pair.to.denom)
 			await this.QueryLiquidityPool({ params: { pool_id } })
 			const {
@@ -89,6 +90,14 @@ export default defineComponent({
 
 			this.payCoinPoolAmount = payCoinPoolAmount
 			this.receiveCoinPoolAmount = receiveCoinPoolAmount
+
+			const receiveCoinAmount = this.getReceiveCoinAmount(
+				{ base_denom: this.pair.from.denom, amount: this.pair.from.amount },
+				payCoinPoolAmount,
+				receiveCoinPoolAmount,
+			)
+			console.log({ receiveCoinAmount })
+			this.receiveCoinAmount = receiveCoinAmount
 
 			const orderPrice = String(this.getSwapPrice(this.pair.from.amount, payCoinPoolAmount, receiveCoinPoolAmount))
 

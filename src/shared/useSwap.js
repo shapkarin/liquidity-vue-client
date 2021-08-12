@@ -17,8 +17,8 @@ export default function () {
 				_b !== void 0
 					? _b
 					: 0.003 / 2) // ?? alert('Error: getDenomPrecision');
-			const payCoinBaseDenomDecimalDigits =
-				(_c = store.getters['demeris/getDenomPrecision']({ name: payCoinData.base_denom })) !== null && _c !== void 0 ? _c : 6
+			// (_c = store.getters['demeris/getDenomPrecision']({ name: payCoinData.base_denom })) !== null && _c !== void 0 ? _c : 6
+			const payCoinBaseDenomDecimalDigits = 6
 			const payCoinBaseDenomAmount = Math.trunc(payCoinData.amount * swapFeeRate * 10 ** payCoinBaseDenomDecimalDigits)
 			const decimalMaxDigits = 10 ** maxDecimal
 			const swapPrice = Number(getSwapPrice(payCoinBaseDenomAmount, receiveCoinPoolAmount, payCoinPoolAmount))
