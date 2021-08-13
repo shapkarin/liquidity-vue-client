@@ -27,9 +27,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
-import useBalances from '../shared/useBalances'
+// import useBalances from '../shared/useBalances'
 
 export default defineComponent({
 	name: 'AddLiquidityPool',
@@ -47,11 +47,11 @@ export default defineComponent({
 			},
 		}
 	},
-	async setup() {
-		const { balances, address } = await useBalances()
+	// async setup() {
+	// 	const { balances, address } = await useBalances()
 
-		return { balances, address }
-	},
+	// 	return { balances, address }
+	// },
 	async mounted() {
 		const {
 			params: {
@@ -64,9 +64,12 @@ export default defineComponent({
 		// this.requirements.init_pool_coin_mint_amount = init_pool_coin_mint_amount
 		this.validation.min_init_deposit_amount = min_init_deposit_amount
 		this.validation.pool_creation_fee = pool_creation_fee
+
+		await this.QueryAllBalances({ params: { address: this.address } })
 	},
 	methods: {
 		...mapActions('tendermint.liquidity.v1beta1', ['QueryParams', 'sendMsgCreatePool']),
+		...mapActions('cosmos.bank.v1beta1', ['QueryAllBalances']),
 		async createPool() {
 			if (
 				Number(this.validation.min_init_deposit_amount) > this.deposit[0].amount ||
@@ -85,6 +88,13 @@ export default defineComponent({
 				},
 				memo: this.memo,
 			})
+		},
+	},
+	computed: {
+		...mapGetters('common/wallet', ['address']),
+		...mapGetters('cosmos.bank.v1beta1', ['getAllBalances']),
+		balances() {
+			return this.getAllBalances({ params: { address: this.address } }).balances
 		},
 	},
 })
