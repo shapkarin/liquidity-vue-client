@@ -4,7 +4,11 @@
 			payCoinPoolAmount: {{ payCoinPoolAmount }}<br />
 			receiveCoinPoolAmount: {{ receiveCoinPoolAmount }}<br />
 		</div>
+		<SearchSelect />
 		<form>
+			<br />
+			<hr />
+
 			<select v-model="pair.from.denom" @change="onSelectDenom" name="from">
 				<option v-for="(denom, index) in getAllDenomsNames" v-bind:key="'denom1_' + index">{{ denom }}</option>
 			</select>
@@ -26,10 +30,13 @@
 import { defineComponent } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 
-// import useBalances from '../shared/useBalances'
+import SearchSelect from './SearchSelect'
 
 export default defineComponent({
 	name: 'Swap',
+	components: {
+		SearchSelect,
+	},
 	data() {
 		return {
 			pair: {
