@@ -1,12 +1,13 @@
 # AMM-style decentralized token exchange (like Uniswap)
 
 Current app isuse [Cosmjs](https://github.com/cosmos/cosmjs), [Monorepo for Starport front-end development](https://github.com/tendermint/vue), [Vue](https://github.com/vuejs/vue) and [Vuex](https://github.com/vuejs/vuex) to provide sevaral SPA pages with:
-- Liquidity pools creation UI and list
-- Some network status
+- Liquidity pools creation UI
+- Pools list
+- Network status and endpoints list
 - Transactions history
-- UI to swap tokens and list of all exchange directions
-
-Keplr can be used to auth.
+- UI to swap tokens
+- List with all exchange directions
+- Authorisation. Can be used with Keplr
 
 ## Project setup
 
