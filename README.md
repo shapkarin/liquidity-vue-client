@@ -1,8 +1,12 @@
-App UI
+# AMM-style decentralized token exchange (like Uniswap)
 
-This is the [vuejs](https://vuejs.org/) user interface for your app.
+Current app isuse [Cosmjs](https://github.com/cosmos/cosmjs), [Monorepo for Starport front-end development](https://github.com/tendermint/vue), [Vue](https://github.com/vuejs/vue) and [Vuex](https://github.com/vuejs/vuex) to provide sevaral SPA pages with:
+- Liquidity pools creation UI and list
+- Some network status
+- Transactions history
+- UI to swap tokens and list of all exchange directions
 
-The vue.js framework for building your user interface helps with rapid app development. The framework provides UI components including a login and an HTML-based template.
+Keplr can be used to auth.
 
 ## Project setup
 
@@ -10,24 +14,20 @@ The vue.js framework for building your user interface helps with rapid app devel
 npm install
 ```
 
-### Run development environment with .env.dev variables
+### Project run with environment variables from `.env.dev` file
 
 ```
 npm run dev
 ```
 
-### Run development with variables defined at .env.testnet
+### Project run with environment variables from `.env.testnet`
 
 ```
 npm run testnet
 ```
 
-### Compiles and minifies for production
+### Compiles and minifies for production useing enviroment from `.env`
 
 ```
 npm run build
 ```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
