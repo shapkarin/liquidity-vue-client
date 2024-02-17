@@ -1,5 +1,7 @@
 # AMM-style decentralized token exchange (like Uniswap)
 
+**Note: to run it locally you need to setup blockchain [Liquidity Module](https://github.com/shapkarin/liquidity)**
+
 Current app isuse [Cosmjs](https://github.com/cosmos/cosmjs), [Monorepo for Starport front-end development](https://github.com/tendermint/vue), [Vue](https://github.com/vuejs/vue) and [Vuex](https://github.com/vuejs/vuex) to provide sevaral SPA pages with:
 - Liquidity pools creation UI
 - Pools list
